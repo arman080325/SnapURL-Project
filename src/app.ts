@@ -4,8 +4,10 @@ import apiRoutes from './routes/api';
 import redirectRoutes from './routes/redirect';
 
 const app = express();
+import path from 'path';
 
 app.use(express.json());
+app.use(express.static(path.join(__dirname, '../public')));
 
 app.use('/api/urls', apiRoutes);
 app.use('/', redirectRoutes);

@@ -1,11 +1,11 @@
 import { getConnection, closeConnection, getDbInstance } from './connection';
 import { applySchema } from './schema';
-import Database from 'better-sqlite3';
+import { Client } from '@libsql/client';
 import { env } from '../config/env';
 
-export const initDatabase = (dbPath: string = env.DB_PATH): Database.Database => {
+export const initDatabase = async (dbPath: string = env.DB_PATH): Promise<Client> => {
   const db = getConnection(dbPath);
-  applySchema(db);
+  await applySchema(db);
   return db;
 };
 

@@ -1,64 +1,72 @@
 import { getDbInstance } from '../db/connection';
 import { UrlRecord, CreateUrlDTO } from '../types/url';
-import { SqliteError } from 'better-sqlite3';
 
 export class UrlRepository {
-  static create(dto: CreateUrlDTO): UrlRecord {
+  static async create(dto: CreateUrlDTO): Promise<UrlRecord> {
     const db = getDbInstance();
-    const stmt = db.prepare(`
-      INSERT INTO urls (code, original_url, expires_at)
-      VALUES (@code, @original_url, @expires_at)
-    `);
-
     try {
-      const info = stmt.run({
-        code: dto.code,
-        original_url: dto.original_url,
-        expires_at: dto.expires_at || null,
+      await db.execute({
+        sql: `
+          INSERT INTO urls (code, original_url, expires_at)
+          VALUES (?, ?, ?)
+        `,
+        args: [
+          dto.code,
+          dto.original_url,
+          dto.expires_at || null
+        ]
       });
 
-      return this.findByCode(dto.code) as UrlRecord;
+      const record = await this.findByCode(dto.code);
+      if (!record) {
+        throw new Error('Failed to retrieve created record');
+      }
+      return record;
     } catch (error: any) {
-      if (error instanceof SqliteError && error.code === 'SQLITE_CONSTRAINT_UNIQUE') {
+      if (error.message && error.message.includes('UNIQUE constraint failed')) {
         throw new Error('UNIQUE constraint failed: urls.code');
       }
       throw error;
     }
   }
 
-  static findByCode(code: string): UrlRecord | null {
+  static async findByCode(code: string): Promise<UrlRecord | null> {
     const db = getDbInstance();
-    const stmt = db.prepare(`
-      SELECT * FROM urls WHERE code = ?
-    `);
+    const result = await db.execute({
+      sql: `SELECT * FROM urls WHERE code = ?`,
+      args: [code]
+    });
     
-    const row = stmt.get(code) as UrlRecord | undefined;
-    return row || null;
+    if (result.rows.length === 0) {
+      return null;
+    }
+
+    return result.rows[0] as unknown as UrlRecord;
   }
 
-  static incrementClicks(code: string): UrlRecord | null {
+  static async incrementClicks(code: string): Promise<UrlRecord | null> {
     const db = getDbInstance();
     
-    const stmt = db.prepare(`
-      UPDATE urls SET clicks = clicks + 1 WHERE code = ?
-    `);
+    const result = await db.execute({
+      sql: `UPDATE urls SET clicks = clicks + 1 WHERE code = ?`,
+      args: [code]
+    });
     
-    const info = stmt.run(code);
-    
-    if (info.changes === 0) {
+    if (result.rowsAffected === 0) {
       return null;
     }
     
     return this.findByCode(code);
   }
 
-  static isCodeAvailable(code: string): boolean {
+  static async isCodeAvailable(code: string): Promise<boolean> {
     const db = getDbInstance();
-    const stmt = db.prepare(`
-      SELECT count(*) as count FROM urls WHERE code = ?
-    `);
+    const result = await db.execute({
+      sql: `SELECT count(*) as count FROM urls WHERE code = ?`,
+      args: [code]
+    });
     
-    const result = stmt.get(code) as { count: number };
-    return result.count === 0;
+    const count = result.rows[0].count as number;
+    return count === 0;
   }
 }

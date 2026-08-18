@@ -1,7 +1,7 @@
-import Database from 'better-sqlite3';
+import { Client } from '@libsql/client';
 
-export const applySchema = (db: Database.Database): void => {
-  db.exec(`
+export const applySchema = async (db: Client): Promise<void> => {
+  await db.execute(`
     CREATE TABLE IF NOT EXISTS urls (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       code TEXT NOT NULL UNIQUE,
@@ -12,7 +12,7 @@ export const applySchema = (db: Database.Database): void => {
     );
   `);
 
-  db.exec(`
+  await db.execute(`
     CREATE INDEX IF NOT EXISTS idx_urls_code ON urls(code);
   `);
 };
