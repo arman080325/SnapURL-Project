@@ -9,8 +9,8 @@
 - [x] Zod schema validation middleware for request inputs
 - [x] URL shortening with nanoid generation and custom alias collision handling
 - [x] Redirection endpoint `GET /:code` (302 Found) with atomic click counting
-- [ ] Analytics endpoint `GET /api/urls/:code/analytics`
-- [ ] Centralized error handling and 404 handler
+- [x] Analytics endpoint `GET /api/urls/:code/analytics`
+- [x] Centralized error handling and 404 handler
 - [ ] Full Jest test suite with unit and integration tests
 
 ---
@@ -30,11 +30,11 @@
 **Requirements**: REQ-03, REQ-04
 
 ### Phase 3: HTTP API, Redirection & Error Handling
-**Status**: ⬜ Not Started
+**Status**: ✅ Complete
 **Objective**: Build Express routes and controllers (`POST /api/shorten`, `GET /:code`, `GET /api/urls/:code/analytics`), global 404 handler, and standard JSON error response middleware.
 **Requirements**: REQ-05, REQ-06
 
 ### Phase 4: Comprehensive Jest Test Suite & Verification
-**Status**: ⬜ Not Started
+**Status**: ✅ Complete
 **Objective**: Implement unit tests for domain/service/repo layers and Supertest integration tests for all API endpoints, edge cases (invalid URLs, duplicate aliases, non-existent codes), and generate test coverage reports.
 **Requirements**: REQ-07
