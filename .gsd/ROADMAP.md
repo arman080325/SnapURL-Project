@@ -4,8 +4,8 @@
 > **Milestone**: v1.0 Production-Ready URL Shortener API
 
 ## Must-Haves (from SPEC)
-- [ ] TypeScript + Express project architecture with strict typing
-- [ ] SQLite database setup with `better-sqlite3` and schema initialization
+- [x] TypeScript + Express project architecture with strict typing
+- [x] SQLite database setup with `better-sqlite3` and schema initialization
 - [ ] Zod schema validation middleware for request inputs
 - [ ] URL shortening with nanoid generation and custom alias collision handling
 - [ ] Redirection endpoint `GET /:code` (302 Found) with atomic click counting
@@ -18,7 +18,7 @@
 ## Phases
 
 ### Phase 1: Project Setup & Database Layer
-**Status**: ⬜ Not Started
+**Status**: ✅ Complete
 **Objective**: Set up Node.js TypeScript project, dependencies, configuration, SQLite database connection (`better-sqlite3`), database schema/migrations, and repository layer with CRUD operations.
 **Requirements**: REQ-01, REQ-02
 
